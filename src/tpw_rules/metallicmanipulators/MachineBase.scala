@@ -20,6 +20,6 @@ trait BlockMachine extends BlockContainer with Front {
 }
 
 trait TileMachine extends TileEntity {
-  def placed()
-  def broken()
+  def placed() = {}
+  def broken() = {}
 }
