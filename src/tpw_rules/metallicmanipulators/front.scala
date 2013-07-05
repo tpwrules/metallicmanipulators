@@ -1,12 +1,11 @@
 package tpw_rules.metallicmanipulators
 
-import net.minecraft.{util, world, entity, item, client, block}
+import net.minecraft.{util, world, entity, item, block}
 import util.{Icon, MathHelper}
 import world.World
 import block.Block
 import entity.EntityLivingBase
 import item.ItemStack
-import client.renderer.texture.IconRegister
 import net.minecraftforge.common.ForgeDirection
 
 trait Front extends Block {

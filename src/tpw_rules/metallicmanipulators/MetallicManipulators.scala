@@ -1,7 +1,6 @@
 package tpw_rules.metallicmanipulators
 
 import cpw.mods.fml.common.{ Mod, SidedProxy, event }
-import cpw.mods.fml.common.Mod._
 import cpw.mods.fml.common.network.NetworkMod
 
 @Mod(modLanguage="scala", modid="metallicmanipulators", name="Metallic Manipulators", version="1")
@@ -17,11 +16,9 @@ object MetallicManipulators {
   @Mod.EventHandler
   def preinit(e: event.FMLPreInitializationEvent) = {
     val lolol = metallicExtractor
-    println(Config.blockExtractorID+"TESTANG")
   }
 
   @Mod.EventHandler
   def init(e: event.FMLInitializationEvent) = {
-    println("Metallic Manipulators Initialized!")
   }
 }

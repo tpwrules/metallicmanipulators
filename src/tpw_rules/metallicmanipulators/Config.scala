@@ -1,7 +1,7 @@
 package tpw_rules.metallicmanipulators
 
 import java.io.File
-import net.minecraftforge.common.{Configuration, Property}
+import net.minecraftforge.common.Configuration
 import cpw.mods.fml.common.Loader
 
 object Config {
