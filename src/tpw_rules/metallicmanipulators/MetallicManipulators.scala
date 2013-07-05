@@ -12,8 +12,11 @@ object MetallicManipulators {
     serverSide="tpw_rules.metallicmanipulators.CommonProxy")
   var proxy: CommonProxy = null
 
+  lazy val metallicExtractor = new BlockMetallicExtractor(Config.blockExtractorID)
+
   @Mod.EventHandler
   def preinit(e: event.FMLPreInitializationEvent) = {
+    val lolol = metallicExtractor
     println(Config.blockExtractorID+"TESTANG")
   }
 
