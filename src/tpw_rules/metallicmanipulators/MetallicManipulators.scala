@@ -13,6 +13,11 @@ object MetallicManipulators {
   var proxy: CommonProxy = null
 
   @Mod.EventHandler
+  def preinit(e: event.FMLPreInitializationEvent) = {
+    println(Config.blockExtractorID+"TESTANG")
+  }
+
+  @Mod.EventHandler
   def init(e: event.FMLInitializationEvent) = {
     println("Metallic Manipulators Initialized!")
   }
