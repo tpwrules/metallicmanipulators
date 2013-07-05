@@ -18,6 +18,7 @@ class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) 
   setUnlocalizedName("metallicExtractor")
 
   GameRegistry.registerBlock(this, "MetallicExtractor")
+  GameRegistry.registerTileEntity(classOf[TileMetallicExtractor], "TEMetallicExtractor")
 
   override def registerIcons(ir: IconRegister) = {
     frontTexture = ir.registerIcon("metallicmanipulators:metallicExtractorFront")
