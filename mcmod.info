@@ -1,0 +1,17 @@
+{
+  "modinfoversion": 1,
+  "modlist": [{
+    "modid": "metallicmanipulators",
+    "name": "Metallic Manipulators",
+    "description": "Do fun things with metals.",
+    "version": "1",
+    "mcversion": "1.6.1",
+    "url": "",
+    "updateUrl": "",
+    "authors": [ "tpw_rules" ],
+    "credits": "",
+    "logoFile": "",
+    "requiredMods": [ "Forge" ],
+    "useDependencyInformation": "false"
+  }]
+}
