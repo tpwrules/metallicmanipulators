@@ -22,6 +22,7 @@ trait Front extends Block {
       case 3 => ForgeDirection.WEST
     }
     world.setBlockMetadataWithNotify(x, y, z, direction.ordinal(), 2)
+    super.onBlockPlacedBy(world, x, y, z, entity, item)
   }
 
   override def getIcon(side: Int, meta: Int): Icon = 
