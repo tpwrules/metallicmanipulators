@@ -8,7 +8,8 @@ import net.minecraft.world.World
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.inventory.ISidedInventory
+import net.minecraft.item.crafting.{ShapelessRecipes, ShapedRecipes, IRecipe, CraftingManager}
+import net.minecraftforge.oredict.OreDictionary
 
 class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine {
   var frontTexture: Icon = null
@@ -29,6 +30,11 @@ class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) 
   override def createNewTileEntity(world: World): TileEntity = new TileMetallicExtractor
 }
 
+object TileMetallicExtractor {
+  import scala.collection.JavaConversions._
+  lazy val recipeList = CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.ArrayList[IRecipe]].toList
+}
+
 class TileMetallicExtractor extends TileEntity with SidedInventory {
   val inventorySize = 18
   var inv = new Array[ItemStack](inventorySize)
@@ -36,11 +42,29 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   override def updateEntity() = {
     var changed = false
     for (slot <- 0 until 9; stack = getStackInSlot(slot); if stack != null) {
-      setInventorySlotContents(slot+9, stack)
-      setInventorySlotContents(slot, null)
+      performOperation(decrStackSize(slot, 1))
       changed = true
     }
     if (changed) onInventoryChanged()
+  }
+
+  def performOperation(stack: ItemStack): Unit = {
+    val stackID = stack.itemID
+    // get the recipes that can make this item
+    val recipes = TileMetallicExtractor.recipeList filter { x =>
+      val output = x.getRecipeOutput
+      output != null && output.stackSize == 1 && output.itemID == stackID}
+    if (recipes.length != 1) return // return if we found either no or too many recipes
+    // get the list of items this recipe requires
+    import scala.collection.JavaConversions._
+    val inputList = recipes(0) match {
+        case x: ShapedRecipes => x.recipeItems.toList
+        case x: ShapelessRecipes => x.recipeItems.asInstanceOf[java.util.ArrayList[ItemStack]].toList
+        case _ => List()
+      }
+    // get the items we can turn into outputs
+    val elgibleOutputs = inputList filter { x => Config.ingotNames contains OreDictionary.getOreName(OreDictionary.getOreID(x)) }
+    for (x <- elgibleOutputs) println(x)
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =

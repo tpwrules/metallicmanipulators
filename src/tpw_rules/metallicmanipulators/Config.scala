@@ -11,5 +11,7 @@ object Config {
 
   val blockExtractorID = config.getBlock("MetallicExtractor", "ID", 2400).getInt
 
+  val ingotNames = config.get("General", "ingotNames", Array("ingotIron", "ingotGold")).getStringList.toList
+
   config.save()
 }
