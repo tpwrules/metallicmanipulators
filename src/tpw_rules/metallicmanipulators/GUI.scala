@@ -3,8 +3,12 @@ package tpw_rules.metallicmanipulators
 import net.minecraft.inventory.{Slot, IInventory, Container}
 import net.minecraft.entity.player.{InventoryPlayer, EntityPlayer}
 import net.minecraft.item.ItemStack
+import net.minecraft.client.gui.inventory.GuiContainer
+import net.minecraft.util.StatCollector
+import org.lwjgl.opengl.GL11
+import net.minecraft.client.resources.ResourceLocation
 
-trait StandardContainer extends Container with Inventory {
+trait StandardContainer extends Container {
   protected var te: IInventory
   val playerInventoryStart: Int
 
@@ -47,5 +51,22 @@ trait StandardContainer extends Container with Inventory {
     slotObject.onPickupFromSlot(player, slotStack)
 
     remainingStack
+  }
+}
+
+trait StandardGUI extends GuiContainer {
+  val inventoryName: String
+  val guiTexture: ResourceLocation
+
+  override protected def drawGuiContainerForegroundLayer(a: Int, b: Int) = {
+    super.drawGuiContainerForegroundLayer(a, b)
+    fontRenderer.drawString(inventoryName, 8, 6, 0x404040)
+    fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize-94, 0x404040)
+  }
+
+  override protected def drawGuiContainerBackgroundLayer(a: Float, b: Int, c: Int) = {
+    GL11.glColor4f(1f, 1f, 1f, 1f)
+    this.mc.renderEngine.func_110577_a(guiTexture)
+    this.drawTexturedModalRect((width-xSize)/2, (height-ySize)/2, 0, 0, xSize, ySize)
   }
 }
