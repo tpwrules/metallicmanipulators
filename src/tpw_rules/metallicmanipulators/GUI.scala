@@ -47,7 +47,7 @@ trait StandardContainer extends Container {
 
   override def transferStackInSlot(player: EntityPlayer, slot: Int): ItemStack = {
     val slotObject = inventorySlots.get(slot).asInstanceOf[Slot]
-    if (slotObject == null || !slotObject.getHasStack) null
+    if (slotObject == null || !slotObject.getHasStack) return null
 
     val slotStack = slotObject.getStack
     val remainingStack = slotStack.copy
@@ -60,7 +60,7 @@ trait StandardContainer extends Container {
     else
       slotObject.onSlotChanged()
 
-    if (slotStack.stackSize == remainingStack.stackSize) null
+    if (slotStack.stackSize == remainingStack.stackSize) return null
 
     slotObject.onPickupFromSlot(player, slotStack)
 

@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.texture.IconRegister
 import net.minecraft.util.{MathHelper, Icon}
 import net.minecraft.world.World
 import cpw.mods.fml.common.registry.GameRegistry
-import net.minecraft.tileentity.TileEntity
+import net.minecraft.tileentity.{TileEntityFurnace, TileEntity}
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.item.crafting.{ShapelessRecipes, ShapedRecipes, IRecipe, CraftingManager}
 import net.minecraftforge.oredict.{ShapedOreRecipe, OreDictionary}
@@ -42,7 +42,7 @@ object TileMetallicExtractor {
 }
 
 class TileMetallicExtractor extends TileEntity with SidedInventory {
-  val inventorySize = 18
+  val inventorySize = 19
   var inv = new Array[ItemStack](inventorySize)
 
   var workItem: ItemStack = null
@@ -51,14 +51,21 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
 
   var progress = 0
 
+  var power = 0
+
   override def updateEntity(): Unit = {
     if (worldObj.isRemote) return // don't do work if on the client
+    // consume an item from the power slot if necessary
+    /*if (power <= 100) {
+      power += TileEntityFurnace.getItemBurnTime()
+    }*/
     if (outbuf.length > 0) {
       dumpOutput(List()) // if there is pending output, dump it before continuing
     } else if (workItem == null) { // grab an item to work on if we aren't currently working on one
       workItem = getWorkItem
-    } else {
+    } else if (power > 0) {
       progress += 1
+      power -= 1
       if (progress >= 100) {
         performOperation(workItem)
         progress = 0
@@ -205,7 +212,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
 
 class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor) extends
     Container with StandardContainer {
-  val playerInventoryStart = 18
+  val playerInventoryStart = 19
   val tileEntity = te.asInstanceOf[IInventory]
 
   var currentProgress = -1
@@ -218,6 +225,7 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
     addSlotToContainer(new SlotOutput(tileEntity, 9+(y*3)+x,
       106+(x*18), 17+(y*18)))
   }
+  addSlotToContainer(new SlotFuel(tileEntity, 18, 8, 76))
 
   addPlayerSlots(playerInv, 8, 107)
 
@@ -228,10 +236,12 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
 
   override def merge(stack: ItemStack, slot: Int) = {
     if (slot < playerInventoryStart) {
-      if (!this.mergeItemStack(stack, playerInventoryStart, playerInventoryStart+36,true)) {
+      if (!this.mergeItemStack(stack, playerInventoryStart, playerInventoryStart+36, true)) {
         false
       }
-    } else if (!this.mergeItemStack(stack, 0, 9, false)) {
+    } else if (TileEntityFurnace.getItemBurnTime(stack) == 0) {
+      if (!this.mergeItemStack(stack, 0, 9, false)) false
+    } else if (!this.mergeItemStack(stack, 18, 19, false)) {
       false
     }
     true
@@ -246,7 +256,8 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
     super.detectAndSendChanges()
     if (currentProgress != te.progress) {
       this.crafters foreach { crafter =>
-        crafter.asInstanceOf[ICrafting].sendProgressBarUpdate(this, 0, te.progress) }
+        crafter.asInstanceOf[ICrafting].sendProgressBarUpdate(this, 0, te.progress)
+      }
     }
     currentProgress = te.progress
   }
