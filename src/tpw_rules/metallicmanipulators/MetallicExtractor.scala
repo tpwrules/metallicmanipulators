@@ -18,7 +18,7 @@ import net.minecraft.entity.player.InventoryPlayer
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.resources.ResourceLocation
 
-class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine {
+class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine with BlockGUI {
   var frontTexture: Icon = null
   var sideTexture: Icon = null
 
