@@ -57,7 +57,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   }
 
   def dumpOutput(output: List[ItemStack]) = {
-    outbuf = output ++ outbuf filter {x => println(x); !mergeStackToSlots(x, 9, 18)}
+    outbuf = output ++ outbuf filter {x => !mergeStackToSlots(x, 9, 18)}
   }
 
   def performOperation(inputStack: ItemStack): Unit = {
@@ -108,7 +108,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
         stack.stackSize = MathHelper.floor_double(part)
       }
     }
-    outputStacks foreach {x => println(x)}
+    // and finally, stick the output into our inventory
     dumpOutput(outputStacks)
   }
 
