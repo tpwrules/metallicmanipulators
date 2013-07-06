@@ -7,7 +7,7 @@ import net.minecraft.util.Icon
 import net.minecraft.world.World
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.item.ItemStack
+import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.item.crafting.{ShapelessRecipes, ShapedRecipes, IRecipe, CraftingManager}
 import net.minecraftforge.oredict.OreDictionary
 
@@ -49,6 +49,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   }
 
   def performOperation(stack: ItemStack): Unit = {
+    OreDictionary.getOreNames foreach {x => println(x)}
     val stackID = stack.itemID
     // get the recipes that can make this item
     val recipes = TileMetallicExtractor.recipeList filter { x =>
@@ -63,7 +64,12 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
         case _ => List()
       }
     // get the items we can turn into outputs
-    val elgibleOutputs = inputList filter { x => Config.ingotNames contains OreDictionary.getOreName(OreDictionary.getOreID(x)) }
+    val elgibleOutputs = inputList filter { x => x != null } filter { x =>
+        x.itemID == Item.ingotGold.itemID ||
+        x.itemID == Item.ingotIron.itemID ||
+        (OreDictionary.getOreName(OreDictionary.getOreID(x)) startsWith "ingot")
+      }
+    println("elgible outputs")
     for (x <- elgibleOutputs) println(x)
   }
 
