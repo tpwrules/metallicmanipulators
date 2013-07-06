@@ -13,7 +13,7 @@ import net.minecraftforge.oredict.{ShapedOreRecipe, OreDictionary}
 
 import scala.collection.JavaConversions._
 import net.minecraft.nbt.{NBTTagList, NBTTagCompound}
-import net.minecraft.inventory.{Slot, IInventory, Container}
+import net.minecraft.inventory.{ICrafting, Slot, IInventory, Container}
 import net.minecraft.entity.player.InventoryPlayer
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.resources.ResourceLocation
@@ -194,6 +194,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   def getInvName = "Metallic Extractor"
   def isInvNameLocalized = true
 
+  def getScaledProgress = progress*24/100
+
   override def getContainer(invPlayer: InventoryPlayer) =
      new ContainerMetallicExtractor(invPlayer, this).asInstanceOf[StandardContainer]
   override def getGUI(invPlayer: InventoryPlayer) =
@@ -204,6 +206,8 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
     Container with StandardContainer {
   val playerInventoryStart = 18
   val tileEntity = te.asInstanceOf[IInventory]
+
+  var currentProgress = -1
 
   for (y <- 0 until 3; x <- 0 until 3) {
     addSlotToContainer(new Slot(tileEntity, (y*3)+x,
@@ -230,6 +234,26 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
       false
     }
     true
+  }
+
+  override def addCraftingToCrafters(crafter: ICrafting) = {
+    super.addCraftingToCrafters(crafter)
+    crafter.sendProgressBarUpdate(this, 0, te.progress)
+  }
+
+  override def detectAndSendChanges() = {
+    super.detectAndSendChanges()
+    if (currentProgress != te.progress) {
+      this.crafters foreach { crafter =>
+        crafter.asInstanceOf[ICrafting].sendProgressBarUpdate(this, 0, te.progress) }
+    }
+    currentProgress = te.progress
+  }
+
+  override def updateProgressBar(which: Int, value: Int) = {
+    which match {
+      case 0 => te.progress = value
+    }
   }
 }
 
