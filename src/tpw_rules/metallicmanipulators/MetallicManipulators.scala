@@ -1,7 +1,7 @@
 package tpw_rules.metallicmanipulators
 
 import cpw.mods.fml.common.{ Mod, SidedProxy, event }
-import cpw.mods.fml.common.network.NetworkMod
+import cpw.mods.fml.common.network.{NetworkRegistry, NetworkMod}
 
 @Mod(modLanguage="scala", modid="metallicmanipulators", name="Metallic Manipulators", version="1")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
@@ -12,6 +12,8 @@ object MetallicManipulators {
   var proxy: CommonProxy = null
 
   lazy val metallicExtractor = new BlockMetallicExtractor(Config.blockExtractorID)
+
+  NetworkRegistry.instance.registerGuiHandler(this, GUIHandler)
 
   @Mod.EventHandler
   def preinit(e: event.FMLPreInitializationEvent) = {

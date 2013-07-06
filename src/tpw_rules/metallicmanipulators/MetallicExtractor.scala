@@ -13,6 +13,10 @@ import net.minecraftforge.oredict.{ShapedOreRecipe, OreDictionary}
 
 import scala.collection.JavaConversions._
 import net.minecraft.nbt.{NBTTagList, NBTTagCompound}
+import net.minecraft.inventory.{Slot, IInventory, Container}
+import net.minecraft.entity.player.InventoryPlayer
+import net.minecraft.client.gui.inventory.GuiContainer
+import net.minecraft.client.resources.ResourceLocation
 
 class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine {
   var frontTexture: Icon = null
@@ -157,4 +161,41 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
 
   def getInvName = "Metallic Extractor"
   def isInvNameLocalized = true
+
+  override def getContainer(invPlayer: InventoryPlayer) =
+     new ContainerMetallicExtractor(invPlayer, this).asInstanceOf[StandardContainer]
+  override def getGUI(invPlayer: InventoryPlayer) =
+    new GuiMetallicExtractor(invPlayer, this).asInstanceOf[StandardGUI]
+}
+
+class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor) extends
+    Container with StandardContainer {
+  val playerInventoryStart = 18
+  val tileEntity = te.asInstanceOf[IInventory]
+
+  for (z <- 0 until 1; y <- 0 until 3; x <- 0 until 3) {
+    addSlotToContainer(new Slot(tileEntity, (z*9)+(y*3)+x,
+      18+(x*18)+(z*88), 17+(y*18)))
+  }
+
+  addPlayerSlots(playerInv, 8, 107)
+
+  // stupid crap because the trait can't access protected things in Container
+  override def doAddSlotToContainer(slot: Slot) = addSlotToContainer(slot)
+  override def doMergeItemStack(stack: ItemStack, start: Int, end: Int, backwards: Boolean) =
+    mergeItemStack(stack, start, end, backwards)
+}
+
+class GuiMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor) extends
+    GuiContainer(new ContainerMetallicExtractor(playerInv, te)) with StandardGUI {
+  xSize = 176
+  ySize = 189
+  val inventoryName = "Metallic Extractor"
+  val guiTexture = new ResourceLocation("metallicmanipulators", "metallicExtractor")
+
+  // stupid crap because the trait can't access protected things in Container
+  def getFontRenderer = this.fontRenderer
+  def getXSize = this.xSize
+  def getYSize = this.ySize
+  def getMC = this.mc
 }

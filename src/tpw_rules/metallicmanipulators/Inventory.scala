@@ -2,7 +2,7 @@ package tpw_rules.metallicmanipulators
 
 import net.minecraft.inventory.{ISidedInventory, IInventory}
 import net.minecraft.item.ItemStack
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.{InventoryPlayer, EntityPlayer}
 import scala.util.Random
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.nbt.{NBTTagList, NBTTagCompound}
@@ -16,6 +16,9 @@ trait Inventory extends TileMachine with IInventory {
 
   def getSizeInventory = inventorySize
   def getInventoryStackLimit = 64
+
+  def getGUI(invPlayer: InventoryPlayer): StandardGUI
+  def getContainer(invPlayer: InventoryPlayer): StandardContainer
 
   def decrStackSize(slot: Int, amount: Int): ItemStack = {
     var stack = getStackInSlot(slot)
