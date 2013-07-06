@@ -1,6 +1,6 @@
 package tpw_rules.metallicmanipulators
 
-import net.minecraft.inventory.{Slot, IInventory, Container}
+import net.minecraft.inventory.{ICrafting, Slot, IInventory, Container}
 import net.minecraft.entity.player.{InventoryPlayer, EntityPlayer}
 import net.minecraft.item.ItemStack
 import net.minecraft.client.gui.inventory.GuiContainer
@@ -93,6 +93,7 @@ trait StandardGUI extends GuiContainer {
     GL11.glColor4f(1f, 1f, 1f, 1f)
     this.actualMC.renderEngine.func_110577_a(guiTexture)
     this.drawTexturedModalRect((width-guiWidth)/2, (height-guiHeight)/2, 0, 0, guiWidth, guiHeight)
+    super.drawGuiContainerBackgroundLayer(a, b, c)
   }
 }
 
