@@ -188,6 +188,17 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
   override def doAddSlotToContainer(slot: Slot) = addSlotToContainer(slot)
   override def doMergeItemStack(stack: ItemStack, start: Int, end: Int, backwards: Boolean) =
     mergeItemStack(stack, start, end, backwards)
+
+  override def merge(stack: ItemStack, slot: Int) = {
+    if (slot < playerInventoryStart) {
+      if (!this.mergeItemStack(stack, playerInventoryStart, playerInventoryStart+36,true)) {
+        false
+      }
+    } else if (!this.mergeItemStack(stack, 0, 9, false)) {
+      false
+    }
+    true
+  }
 }
 
 class GuiMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor) extends
