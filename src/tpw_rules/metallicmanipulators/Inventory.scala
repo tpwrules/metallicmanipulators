@@ -95,6 +95,31 @@ trait Inventory extends TileMachine with IInventory {
         inv(slot) = ItemStack.loadItemStackFromNBT(slotTag)
     }
   }
+
+  def mergeStackToSlots(stack: ItemStack, start: Int, end: Int): Boolean = {
+    var done = false
+    for (slot <- start until end; !done; currentStack = getStackInSlot(slot);
+      stack.itemID == currentStack.itemID && (!stack.getHasSubtypes || stack.getItemDamage == currentStack.getItemDamage) && ItemStack.areItemStackTagsEqual(stack, currentStack)) {
+      if (currentStack.stackSize+stack.stackSize > currentStack.getMaxStackSize) {
+        stack.stackSize -= currentStack.getMaxStackSize-currentStack.stackSize
+        currentStack.stackSize = currentStack.getMaxStackSize
+      } else {
+        currentStack.stackSize += stack.stackSize
+        stack.stackSize = 0
+        done = true
+      }
+    }
+    if (!done) {
+      for (slot <- start until end; !done; currentStack = getStackInSlot(slot)) {
+        if (currentStack == null) {
+          setInventorySlotContents(slot, stack)
+          done = true
+        }
+      }
+    }
+    onInventoryChanged()
+    done
+  }
 }
 
 trait SidedInventory extends TileMachine with Inventory with ISidedInventory
