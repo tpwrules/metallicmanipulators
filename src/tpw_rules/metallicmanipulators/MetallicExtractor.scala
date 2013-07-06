@@ -173,9 +173,13 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
   val playerInventoryStart = 18
   val tileEntity = te.asInstanceOf[IInventory]
 
-  for (z <- 0 until 1; y <- 0 until 3; x <- 0 until 3) {
-    addSlotToContainer(new Slot(tileEntity, (z*9)+(y*3)+x,
-      18+(x*18)+(z*88), 17+(y*18)))
+  for (y <- 0 until 3; x <- 0 until 3) {
+    addSlotToContainer(new Slot(tileEntity, (y*3)+x,
+      18+(x*18), 17+(y*18)))
+  }
+  for (y <- 0 until 3; x <- 0 until 3) {
+    addSlotToContainer(new SlotOutput(tileEntity, 9+(y*3)+x,
+      106+(x*18), 17+(y*18)))
   }
 
   addPlayerSlots(playerInv, 8, 107)
