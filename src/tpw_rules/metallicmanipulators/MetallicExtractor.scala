@@ -194,7 +194,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   def getInvName = "Metallic Extractor"
   def isInvNameLocalized = true
 
-  def getScaledProgress = progress*24/100
+  def getScaledProgress = MathHelper.floor_double(progress*24/100)
 
   override def getContainer(invPlayer: InventoryPlayer) =
      new ContainerMetallicExtractor(invPlayer, this).asInstanceOf[StandardContainer]
@@ -269,4 +269,9 @@ class GuiMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor
   def getXSize = this.xSize
   def getYSize = this.ySize
   def getMC = this.mc
+
+  override def drawDynamicElements(x: Int, y: Int) = {
+    this.drawTexturedModalRect(x+76, y+35,
+    176, 0, te.getScaledProgress, 17)
+  }
 }

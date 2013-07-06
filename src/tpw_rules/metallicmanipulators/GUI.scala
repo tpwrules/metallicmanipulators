@@ -92,11 +92,13 @@ trait StandardGUI extends GuiContainer {
   override protected def drawGuiContainerBackgroundLayer(a: Float, b: Int, c: Int) = {
     GL11.glColor4f(1f, 1f, 1f, 1f)
     this.actualMC.renderEngine.func_110577_a(guiTexture)
-    this.drawTexturedModalRect((width-guiWidth)/2, (height-guiHeight)/2, 0, 0, guiWidth, guiHeight)
-    this.drawDynamicElements()
+    val x = (width-guiWidth)/2
+    val y = (height-guiHeight)/2
+    this.drawTexturedModalRect(x, y, 0, 0, guiWidth, guiHeight)
+    this.drawDynamicElements(x, y)
   }
 
-  def drawDynamicElements() = {}
+  def drawDynamicElements(x: Int, y: Int) = {}
 }
 
 object GUIHandler extends IGuiHandler {
