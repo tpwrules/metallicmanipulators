@@ -74,7 +74,6 @@ trait Inventory extends TileMachine with IInventory {
 
   override def writeToNBT(tag: NBTTagCompound) = {
     super.writeToNBT(tag)
-    println("Writing!")
     val invList = new NBTTagList()
     for (slot <- 0 until inventorySize) {
       val stack = inv(slot)
@@ -85,7 +84,6 @@ trait Inventory extends TileMachine with IInventory {
         invList.appendTag(slotTag)
       }
     }
-    tag.setTag("inventory", invList)
   }
 
   override def readFromNBT(tag: NBTTagCompound) = {
@@ -105,7 +103,6 @@ trait Inventory extends TileMachine with IInventory {
       if stack.itemID == currentStack.itemID && (!stack.getHasSubtypes || stack.getItemDamage == currentStack.getItemDamage) && ItemStack.areItemStackTagsEqual(stack, currentStack)) {
       if (!done && currentStack.stackSize+stack.stackSize > currentStack.getMaxStackSize) {
         stack.stackSize -= currentStack.getMaxStackSize-currentStack.stackSize
-        println(stack.stackSize)
         currentStack.stackSize = currentStack.getMaxStackSize
       } else if (!done) {
         currentStack.stackSize += stack.stackSize
