@@ -3,7 +3,7 @@ package tpw_rules.metallicmanipulators
 import net.minecraft.block.{BlockContainer, material}
 import material.Material
 import net.minecraft.client.renderer.texture.IconRegister
-import net.minecraft.util.Icon
+import net.minecraft.util.{MathHelper, Icon}
 import net.minecraft.world.World
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.tileentity.TileEntity
@@ -40,13 +40,24 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   val inventorySize = 18
   var inv = new Array[ItemStack](inventorySize)
 
-  override def updateEntity() = {
+  var outbuf: List[ItemStack] = List()
+
+  override def updateEntity(): Unit = {
+    if (worldObj.isRemote) return
     var changed = false
-    for (slot <- 0 until 9; stack = getStackInSlot(slot); if stack != null) {
-      performOperation(decrStackSize(slot, 1))
-      changed = true
+    if (outbuf.length > 0) {
+      dumpOutput(List())
+    } else {
+      for (slot <- 0 until 9; stack = getStackInSlot(slot); if stack != null; if !changed) {
+        performOperation(decrStackSize(slot, 1))
+        changed = true
+      }
     }
     if (changed) onInventoryChanged()
+  }
+
+  def dumpOutput(output: List[ItemStack]) = {
+    outbuf = output ++ outbuf filter {x => println(x); !mergeStackToSlots(x, 9, 18)}
   }
 
   def performOperation(inputStack: ItemStack): Unit = {
@@ -85,6 +96,12 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       }
       if (!merged) outputStacks = elgibleStack.copy :: outputStacks
     }
+    if (inputStack.isItemStackDamageable) {
+      val damageMultiplier = 1-(inputStack.getItemDamage.toDouble/inputStack.getMaxDamage)
+      outputStacks foreach {stack => stack.stackSize = MathHelper.floor_double(stack.stackSize * damageMultiplier)}
+    }
+    outputStacks foreach {x => println(x)}
+    dumpOutput(outputStacks)
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =
