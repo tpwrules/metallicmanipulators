@@ -37,7 +37,7 @@ object TileMetallicExtractor {
   lazy val recipeList = CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.ArrayList[IRecipe]].toList
 }
 
-class TileMetallicExtractor extends TileEntity with SidedInventory {
+class TileMetallicExtractor extends TileEntity with SidedInventory with DescriptionPacket {
   val inventorySize = 18
   var inv = new Array[ItemStack](inventorySize)
 
