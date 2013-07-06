@@ -34,6 +34,17 @@ trait StandardContainer extends Container {
     }
   }
 
+  def merge(stack: ItemStack, slot: Int): Boolean = {
+    if (slot < playerInventoryStart) {
+      if (!this.doMergeItemStack(stack, playerInventoryStart, playerInventoryStart+36, backwards=true)) {
+        false
+      }
+    } else if (!this.doMergeItemStack(stack, 0, playerInventoryStart, backwards=false)) {
+      false
+    }
+    true
+  }
+
   override def transferStackInSlot(player: EntityPlayer, slot: Int): ItemStack = {
     val slotObject = inventorySlots.get(slot).asInstanceOf[Slot]
     if (slotObject == null || !slotObject.getHasStack) null
@@ -42,13 +53,7 @@ trait StandardContainer extends Container {
     val remainingStack = slotStack.copy
 
     // merge into either player or TE based on source inventory
-    if (slot < playerInventoryStart) {
-      if (!this.doMergeItemStack(slotStack, playerInventoryStart, playerInventoryStart+36, backwards=true)) {
-        return null
-      }
-    } else if (!this.doMergeItemStack(slotStack, 0, playerInventoryStart, backwards=false)) {
-      return null
-    }
+    if (!merge(slotStack, slot)) null
 
     if (slotStack.stackSize == 0)
       slotObject.putStack(null)
