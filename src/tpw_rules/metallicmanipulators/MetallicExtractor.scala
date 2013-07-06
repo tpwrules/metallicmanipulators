@@ -56,20 +56,20 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   override def updateEntity(): Unit = {
     if (worldObj.isRemote) return // don't do work if on the client
     // consume an item from the power slot if necessary
-    /*if (power <= 100) {
-      power += TileEntityFurnace.getItemBurnTime()
-    }*/
+    if (power <= 800 && inv(18) != null) {
+      power += TileEntityFurnace.getItemBurnTime(decrStackSize(18, 1))*2
+    }
     if (outbuf.length > 0) {
       dumpOutput(List()) // if there is pending output, dump it before continuing
-    } else if (workItem == null) { // grab an item to work on if we aren't currently working on one
+    } else if (workItem == null && power >= 800) { // grab an item to work on if we aren't currently working on one
       workItem = getWorkItem
     } else if (power > 0) {
       progress += 1
-      power -= 1
+      power -= 8
       if (progress >= 100) {
         performOperation(workItem)
         progress = 0
-        workItem = if (outbuf.length > 0) getWorkItem else null
+        workItem = if (outbuf.length > 0 && power >= 800) getWorkItem else null
       }
     }
   }
@@ -160,6 +160,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       tag.setTag("outBuffer", invList)
     }
     tag.setInteger("progress", progress)
+    tag.setInteger("power", power)
   }
 
   override def readFromNBT(tag: NBTTagCompound): Unit = {
@@ -178,6 +179,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     }
     progress = tag.getInteger("progress")
     if (progress < 0 || progress > 100) progress = 0
+    power = tag.getInteger("power")
+    if (power < 0) power = 0
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =
@@ -202,7 +205,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   def getInvName = "Metallic Extractor"
   def isInvNameLocalized = true
 
-  def getScaledProgress = MathHelper.floor_double(progress*24/100)
+  def getScaledProgress = MathHelper.clamp_int(MathHelper.floor_double(progress*24/100), 0, 24)
+  def getScaledPower = MathHelper.clamp_int(MathHelper.floor_double(power*127/5000), 0, 127)
 
   override def getContainer(invPlayer: InventoryPlayer) =
      new ContainerMetallicExtractor(invPlayer, this).asInstanceOf[StandardContainer]
@@ -216,6 +220,7 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
   val tileEntity = te.asInstanceOf[IInventory]
 
   var currentProgress = -1
+  var currentPower = -1
 
   for (y <- 0 until 3; x <- 0 until 3) {
     addSlotToContainer(new Slot(tileEntity, (y*3)+x,
@@ -250,22 +255,27 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
   override def addCraftingToCrafters(crafter: ICrafting) = {
     super.addCraftingToCrafters(crafter)
     crafter.sendProgressBarUpdate(this, 0, te.progress)
+    crafter.sendProgressBarUpdate(this, 1, te.power)
   }
 
   override def detectAndSendChanges() = {
     super.detectAndSendChanges()
-    if (currentProgress != te.progress) {
+    if (currentProgress != te.progress || currentPower != te.power) {
       this.crafters foreach { crafter =>
-        crafter.asInstanceOf[ICrafting].sendProgressBarUpdate(this, 0, te.progress)
+        val c = crafter.asInstanceOf[ICrafting]
+        c.sendProgressBarUpdate(this, 0, te.progress)
+        c.sendProgressBarUpdate(this, 1, te.power)
       }
     }
     currentProgress = te.progress
+    currentPower = te.power
   }
 
   override def updateProgressBar(which: Int, value: Int): Unit = {
     if (!te.worldObj.isRemote) return
     which match {
       case 0 => te.progress = value
+      case 1 => te.power = value
     }
   }
 }
@@ -286,5 +296,7 @@ class GuiMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor
   override def drawDynamicElements(x: Int, y: Int) = {
     this.drawTexturedModalRect(x+76, y+35,
     176, 0, te.getScaledProgress, 17)
+    this.drawTexturedModalRect(x+36, y+80,
+    0, 189, te.getScaledPower, 8)
   }
 }

@@ -89,7 +89,6 @@ trait Inventory extends TileMachine with IInventory {
   override def readFromNBT(tag: NBTTagCompound) = {
     super.readFromNBT(tag)
     val invList = tag.getTagList("inventory")
-    println("Reading!", invList.tagCount)
     for (i <- 0 until invList.tagCount; slotTag = invList.tagAt(i).asInstanceOf[NBTTagCompound]) {
       val slot = slotTag.getByte("slot").toInt
       if (slot >= 0 && slot < inventorySize)
