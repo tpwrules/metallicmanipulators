@@ -48,9 +48,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     if (changed) onInventoryChanged()
   }
 
-  def performOperation(stack: ItemStack): Unit = {
-    OreDictionary.getOreNames foreach {x => println(x)}
-    val stackID = stack.itemID
+  def performOperation(inputStack: ItemStack): Unit = {
+    val stackID = inputStack.itemID
     // get the recipes that can make this item
     val recipes = TileMetallicExtractor.recipeList filter { x =>
       val output = x.getRecipeOutput
@@ -69,8 +68,19 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
         x.itemID == Item.ingotIron.itemID ||
         (OreDictionary.getOreName(OreDictionary.getOreID(x)) startsWith "ingot")
       }
-    println("elgible outputs")
-    for (x <- elgibleOutputs) println(x)
+    // combine similar items into output stacks
+    var outputStacks: List[ItemStack] = List()
+    for (elgibleStack <- elgibleOutputs) {
+      var changed = false
+      for (outputStack <- outputStacks) {
+        if (elgibleStack.itemID == outputStack.itemID && (!elgibleStack.getHasSubtypes || elgibleStack.getItemDamage == outputStack.getItemDamage)) {
+          outputStack.stackSize += elgibleStack.stackSize
+          changed = true
+        }
+      }
+      if (!changed) outputStacks = elgibleStack :: outputStacks
+    }
+    outputStacks foreach { x => print(x) }
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =
