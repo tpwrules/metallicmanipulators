@@ -12,6 +12,7 @@ import net.minecraft.item.crafting.{ShapelessRecipes, ShapedRecipes, IRecipe, Cr
 import net.minecraftforge.oredict.{ShapedOreRecipe, OreDictionary}
 
 import scala.collection.JavaConversions._
+import net.minecraft.nbt.{NBTTagList, NBTTagCompound}
 
 class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine {
   var frontTexture: Icon = null
@@ -110,6 +111,29 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     }
     // and finally, stick the output into our inventory
     dumpOutput(outputStacks)
+  }
+
+  override def writeToNBT(tag: NBTTagCompound): Unit = {
+    super.writeToNBT(tag)
+    if (outbuf.length == 0) return
+    val invList = new NBTTagList()
+    outbuf foreach { stack =>
+      val stackTag = new NBTTagCompound()
+      stack.writeToNBT(stackTag)
+      invList.appendTag(stackTag)
+    }
+    tag.setTag("outBuffer", invList)
+  }
+
+  override def readFromNBT(tag: NBTTagCompound): Unit = {
+    super.readFromNBT(tag)
+    outbuf = List()
+    if (!tag.hasKey("outBuffer")) return
+    val invList = tag.getTagList("outBuffer")
+    for (i <- 0 until invList.tagCount) {
+      val stackTag = invList.tagAt(i).asInstanceOf[NBTTagCompound]
+      outbuf = ItemStack.loadItemStackFromNBT(stackTag) :: outbuf
+    }
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =
