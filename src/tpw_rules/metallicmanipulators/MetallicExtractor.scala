@@ -11,6 +11,8 @@ import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.item.crafting.{ShapelessRecipes, ShapedRecipes, IRecipe, CraftingManager}
 import net.minecraftforge.oredict.{ShapedOreRecipe, OreDictionary}
 
+import scala.collection.JavaConversions._
+
 class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine {
   var frontTexture: Icon = null
   var sideTexture: Icon = null
@@ -31,7 +33,6 @@ class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) 
 }
 
 object TileMetallicExtractor {
-  import scala.collection.JavaConversions._
   lazy val recipeList = CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.ArrayList[IRecipe]].toList
 }
 
@@ -56,15 +57,13 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       output != null && output.stackSize == 1 && output.itemID == stackID}
     if (recipes.length != 1) return // return if we found either no or too many recipes
     // get the list of items this recipe requires
-    import scala.collection.JavaConversions._
     val inputList = recipes(0) match {
         case x: ShapedRecipes => x.recipeItems.toList
         case x: ShapedOreRecipe => x.getInput.toList map { x => x match {
           case ores: Array[ItemStack] => ores(0)
           case x: ItemStack => x
           case _ => null
-        }
-        }
+        }}
         case x: ShapelessRecipes => x.recipeItems.asInstanceOf[java.util.ArrayList[ItemStack]].toList
         case _ => List()
       }
@@ -77,14 +76,14 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     // combine similar items into output stacks
     var outputStacks: List[ItemStack] = List()
     for (elgibleStack <- elgibleOutputs) {
-      var changed = false
+      var merged = false
       for (outputStack <- outputStacks) {
         if (elgibleStack.itemID == outputStack.itemID && (!elgibleStack.getHasSubtypes || elgibleStack.getItemDamage == outputStack.getItemDamage)) {
           outputStack.stackSize += elgibleStack.stackSize
-          changed = true
+          merged = true
         }
       }
-      if (!changed) outputStacks = elgibleStack.copy :: outputStacks
+      if (!merged) outputStacks = elgibleStack.copy :: outputStacks
     }
   }
 
