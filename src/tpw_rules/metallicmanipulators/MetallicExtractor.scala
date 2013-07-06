@@ -9,7 +9,7 @@ import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.item.crafting.{ShapelessRecipes, ShapedRecipes, IRecipe, CraftingManager}
-import net.minecraftforge.oredict.OreDictionary
+import net.minecraftforge.oredict.{ShapedOreRecipe, OreDictionary}
 
 class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine {
   var frontTexture: Icon = null
@@ -59,6 +59,12 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     import scala.collection.JavaConversions._
     val inputList = recipes(0) match {
         case x: ShapedRecipes => x.recipeItems.toList
+        case x: ShapedOreRecipe => x.getInput.toList map { x => x match {
+          case ores: Array[ItemStack] => ores(0)
+          case x: ItemStack => x
+          case _ => null
+        }
+        }
         case x: ShapelessRecipes => x.recipeItems.asInstanceOf[java.util.ArrayList[ItemStack]].toList
         case _ => List()
       }
@@ -78,9 +84,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
           changed = true
         }
       }
-      if (!changed) outputStacks = elgibleStack :: outputStacks
+      if (!changed) outputStacks = elgibleStack.copy :: outputStacks
     }
-    outputStacks foreach { x => print(x) }
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =
