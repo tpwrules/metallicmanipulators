@@ -45,20 +45,35 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   val inventorySize = 18
   var inv = new Array[ItemStack](inventorySize)
 
+  var workItem: ItemStack = null
+
   var outbuf: List[ItemStack] = List()
 
+  var progress = 0
+
   override def updateEntity(): Unit = {
-    if (worldObj.isRemote) return
-    var changed = false
+    if (worldObj.isRemote) return // don't do work if on the client
     if (outbuf.length > 0) {
-      dumpOutput(List())
+      dumpOutput(List()) // if there is pending output, dump it before continuing
+    } else if (workItem == null) { // grab an item to work on if we aren't currently working on one
+      workItem = getWorkItem
     } else {
-      for (slot <- 0 until 9; stack = getStackInSlot(slot); if stack != null; if !changed) {
-        performOperation(decrStackSize(slot, 1))
-        changed = true
+      progress += 1
+      if (progress == 100) {
+        performOperation(workItem)
+        progress = 0
+        workItem = if (outbuf.length > 0) getWorkItem else null
       }
     }
-    if (changed) onInventoryChanged()
+  }
+
+  def getWorkItem: ItemStack = {
+    for (slot <- 0 until 9; stack = getStackInSlot(slot); if stack != null) {
+      val out = decrStackSize(slot, 1)
+      onInventoryChanged()
+      out
+    }
+    null
   }
 
   def dumpOutput(output: List[ItemStack]) = {
@@ -117,27 +132,44 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     dumpOutput(outputStacks)
   }
 
+  override def broken() = {
+    if (workItem != null) vomitItemList(List(workItem))
+  }
+
   override def writeToNBT(tag: NBTTagCompound): Unit = {
     super.writeToNBT(tag)
-    if (outbuf.length == 0) return
-    val invList = new NBTTagList()
-    outbuf foreach { stack =>
-      val stackTag = new NBTTagCompound()
-      stack.writeToNBT(stackTag)
-      invList.appendTag(stackTag)
+    if (workItem != null) {
+      val t = new NBTTagCompound
+      workItem.writeToNBT(t)
+      tag.setCompoundTag("workItem", t)
     }
-    tag.setTag("outBuffer", invList)
+    if (outbuf.length != 0){
+      val invList = new NBTTagList()
+      outbuf foreach { stack =>
+        val stackTag = new NBTTagCompound()
+        stack.writeToNBT(stackTag)
+        invList.appendTag(stackTag)
+      }
+      tag.setTag("outBuffer", invList)
+    }
+    tag.setInteger("progress", progress)
   }
 
   override def readFromNBT(tag: NBTTagCompound): Unit = {
     super.readFromNBT(tag)
     outbuf = List()
-    if (!tag.hasKey("outBuffer")) return
-    val invList = tag.getTagList("outBuffer")
-    for (i <- 0 until invList.tagCount) {
-      val stackTag = invList.tagAt(i).asInstanceOf[NBTTagCompound]
-      outbuf = ItemStack.loadItemStackFromNBT(stackTag) :: outbuf
+    if (tag.hasKey("outBuffer")) {
+      val invList = tag.getTagList("outBuffer")
+      for (i <- 0 until invList.tagCount) {
+        val stackTag = invList.tagAt(i).asInstanceOf[NBTTagCompound]
+        outbuf = ItemStack.loadItemStackFromNBT(stackTag) :: outbuf
+      }
     }
+    workItem = null
+    if (tag.hasKey("workItem")) {
+      workItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("workItem"))
+    }
+    progress = tag.getInteger("progress")
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =
