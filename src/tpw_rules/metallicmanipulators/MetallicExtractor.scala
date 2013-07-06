@@ -59,7 +59,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       workItem = getWorkItem
     } else {
       progress += 1
-      if (progress == 100) {
+      if (progress >= 100) {
         performOperation(workItem)
         progress = 0
         workItem = if (outbuf.length > 0) getWorkItem else null
@@ -71,7 +71,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     for (slot <- 0 until 9; stack = getStackInSlot(slot); if stack != null) {
       val out = decrStackSize(slot, 1)
       onInventoryChanged()
-      out
+      return out
     }
     null
   }
@@ -170,6 +170,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       workItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("workItem"))
     }
     progress = tag.getInteger("progress")
+    if (progress < 0 || progress > 100) progress = 0
   }
 
   def canInsertItem(slot: Int, stack: ItemStack, side: Int) =
@@ -250,7 +251,8 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
     currentProgress = te.progress
   }
 
-  override def updateProgressBar(which: Int, value: Int) = {
+  override def updateProgressBar(which: Int, value: Int): Unit = {
+    if (!te.worldObj.isRemote) return
     which match {
       case 0 => te.progress = value
     }
