@@ -25,11 +25,11 @@ trait StandardContainer extends Container {
 
   def addPlayerSlots(inv: InventoryPlayer, px: Int, py: Int) = {
     for (y <- 0 until 3; x <- 0 until 9) {
-      this.doAddSlotToContainer(new Slot(inv, playerInventoryStart+(y*3)+x,
+      this.doAddSlotToContainer(new Slot(inv, 9+(y*9)+x,
       px+(x*18), py+(y*18)))
     }
     for (x <- 0 until 9) {
-      this.doAddSlotToContainer(new Slot(inv, playerInventoryStart+27+x,
+      this.doAddSlotToContainer(new Slot(inv, x,
       px+(x*18), py+58))
     }
   }
