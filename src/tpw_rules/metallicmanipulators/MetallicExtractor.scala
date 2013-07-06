@@ -191,7 +191,7 @@ class GuiMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor
   xSize = 176
   ySize = 189
   val inventoryName = "Metallic Extractor"
-  val guiTexture = new ResourceLocation("metallicmanipulators", "metallicExtractor")
+  val guiTexture = new ResourceLocation("metallicmanipulators", "textures/gui/metallicExtractor.png")
 
   // stupid crap because the trait can't access protected things in Container
   def getFontRenderer = this.fontRenderer
