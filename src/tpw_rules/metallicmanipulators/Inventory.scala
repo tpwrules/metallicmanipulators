@@ -1,6 +1,6 @@
 package tpw_rules.metallicmanipulators
 
-import net.minecraft.inventory.IInventory
+import net.minecraft.inventory.{ISidedInventory, IInventory}
 import net.minecraft.item.ItemStack
 import net.minecraft.entity.player.EntityPlayer
 import scala.util.Random
@@ -96,3 +96,5 @@ trait Inventory extends TileMachine with IInventory {
     }
   }
 }
+
+trait SidedInventory extends TileMachine with Inventory with ISidedInventory

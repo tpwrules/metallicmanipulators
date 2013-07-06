@@ -29,7 +29,7 @@ class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) 
   override def createNewTileEntity(world: World): TileEntity = new TileMetallicExtractor
 }
 
-class TileMetallicExtractor extends TileEntity with Inventory with ISidedInventory {
+class TileMetallicExtractor extends TileEntity with SidedInventory {
   val inventorySize = 18
   var inv = new Array[ItemStack](inventorySize)
 
