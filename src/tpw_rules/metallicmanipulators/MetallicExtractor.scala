@@ -25,6 +25,7 @@ class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) 
   setHardness(5f)
   setResistance(10f)
   setUnlocalizedName("metallicExtractor")
+  setCreativeTab(MetallicManipulators.tabBlocks)
 
   GameRegistry.registerBlock(this, "MetallicExtractor")
   GameRegistry.registerTileEntity(classOf[TileMetallicExtractor], "TEMetallicExtractor")

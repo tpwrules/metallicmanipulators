@@ -1,3 +1,6 @@
 #Metallic Manipulators language file
 
 tile.metallicExtractor.name=Metallic Extractor
+
+itemGroup.metallicManipulatorsBlocks=Metallic Manipulators Blocks
+itemGroup.metallicManipulatorsItems=Metallic Manipulators Items

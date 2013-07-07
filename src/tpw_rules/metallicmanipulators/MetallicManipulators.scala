@@ -11,6 +11,9 @@ object MetallicManipulators {
     serverSide="tpw_rules.metallicmanipulators.CommonProxy")
   var proxy: CommonProxy = null
 
+  val tabBlocks = new CreativeTabBlocks()
+  val tabItems = new CreativeTabItems()
+
   val metallicExtractor = new BlockMetallicExtractor(Config.blockExtractorID)
 
   NetworkRegistry.instance.registerGuiHandler(this, GUIHandler)
