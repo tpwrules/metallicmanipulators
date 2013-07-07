@@ -10,6 +10,7 @@ object Config {
   config.load()
 
   val blockExtractorID = config.getBlock("MetallicExtractor", "ID", 2400).getInt
+  val itemIronNuggetID = config.getItem("IronNugget", "ID", 28760).getInt
 
   val ingotNames = config.get("General", "ingotNames", Array("ingotIron", "ingotGold")).getStringList.toList
 

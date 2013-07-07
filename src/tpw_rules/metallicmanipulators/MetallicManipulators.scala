@@ -16,6 +16,8 @@ object MetallicManipulators {
 
   val metallicExtractor = new BlockMetallicExtractor(Config.blockExtractorID)
 
+  val ironNugget = new ItemIronNugget(Config.itemIronNuggetID)
+
   NetworkRegistry.instance.registerGuiHandler(this, GUIHandler)
 
   @Mod.EventHandler

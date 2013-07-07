@@ -2,5 +2,7 @@
 
 tile.metallicExtractor.name=Metallic Extractor
 
+item.ironNugget.name=Iron Nugget
+
 itemGroup.metallicManipulatorsBlocks=Metallic Manipulators Blocks
 itemGroup.metallicManipulatorsItems=Metallic Manipulators Items
