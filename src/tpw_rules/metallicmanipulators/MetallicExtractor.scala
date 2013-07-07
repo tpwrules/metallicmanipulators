@@ -201,6 +201,12 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       case _ => false
     }
 
+  override def isStackValidForSlot(slot: Int, stack: ItemStack) =
+    slot match {
+      case 18 => TileEntityFurnace.getItemBurnTime(stack) > 0
+      case _ => true
+    }
+
   def getAccessibleSlotsFromSide(side: Int): Array[Int] =
     side match {
       case 1 => (0 until 9).toArray
