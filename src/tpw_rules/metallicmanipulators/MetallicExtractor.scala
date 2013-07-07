@@ -136,6 +136,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
         val nuggets = MathHelper.floor_double((part-part.toInt)*9)
         if (stack.itemID == Item.ingotGold.itemID && nuggets > 0)
           outputStacks = new ItemStack(Item.goldNugget, nuggets) :: outputStacks
+        else if (stack.itemID == Item.ingotIron.itemID && nuggets > 0)
+          outputStacks = new ItemStack(MetallicManipulators.ironNugget, nuggets) :: outputStacks
         stack.stackSize = MathHelper.floor_double(part)
       }
     }
