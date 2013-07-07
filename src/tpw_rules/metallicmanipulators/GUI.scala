@@ -1,6 +1,6 @@
 package tpw_rules.metallicmanipulators
 
-import net.minecraft.inventory.{ICrafting, Slot, IInventory, Container}
+import net.minecraft.inventory.{Slot, IInventory, Container}
 import net.minecraft.entity.player.{InventoryPlayer, EntityPlayer}
 import net.minecraft.item.ItemStack
 import net.minecraft.client.gui.inventory.GuiContainer
@@ -37,10 +37,10 @@ trait StandardContainer extends Container {
   def merge(stack: ItemStack, slot: Int): Boolean = {
     if (slot < playerInventoryStart) {
       if (!this.doMergeItemStack(stack, playerInventoryStart, playerInventoryStart+36, backwards=true)) {
-        false
+        return false
       }
     } else if (!this.doMergeItemStack(stack, 0, playerInventoryStart, backwards=false)) {
-      false
+      return false
     }
     true
   }

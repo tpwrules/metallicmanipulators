@@ -96,8 +96,8 @@ trait Inventory extends TileMachine with IInventory {
 
   def mergeStackToSlots(stack: ItemStack, start: Int, end: Int): Boolean = {
     var done = false
-    for (slot <- start until end; currentStack = getStackInSlot(slot); if currentStack != null;
-      if stack.itemID == currentStack.itemID && (!stack.getHasSubtypes || stack.getItemDamage == currentStack.getItemDamage) && ItemStack.areItemStackTagsEqual(stack, currentStack)) {
+    for (slot <- start until end; currentStack = getStackInSlot(slot); if // split because of stupid unneeded semicolon warning
+      currentStack != null; if stack.itemID == currentStack.itemID && (!stack.getHasSubtypes || stack.getItemDamage == currentStack.getItemDamage) && ItemStack.areItemStackTagsEqual(stack, currentStack)) {
       if (!done && currentStack.stackSize+stack.stackSize > currentStack.getMaxStackSize) {
         stack.stackSize -= currentStack.getMaxStackSize-currentStack.stackSize
         currentStack.stackSize = currentStack.getMaxStackSize

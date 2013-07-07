@@ -131,7 +131,6 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     // reduce output according to item's damage
     if (inputStack.isItemStackDamageable) {
       val damageMultiplier = 1-(inputStack.getItemDamage.toDouble/inputStack.getMaxDamage)
-      //outputStacks foreach {stack => stack.stackSize = MathHelper.floor_double(stack.stackSize * damageMultiplier)}
       outputStacks foreach { stack =>
         val part = stack.stackSize*damageMultiplier
         val nuggets = MathHelper.floor_double((part-part.toInt)*9)
