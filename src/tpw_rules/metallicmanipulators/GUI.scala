@@ -53,7 +53,7 @@ trait StandardContainer extends Container {
     val remainingStack = slotStack.copy
 
     // merge into either player or TE based on source inventory
-    if (!merge(slotStack, slot)) null
+    if (!merge(slotStack, slot)) return null
 
     if (slotStack.stackSize == 0)
       slotObject.putStack(null)
