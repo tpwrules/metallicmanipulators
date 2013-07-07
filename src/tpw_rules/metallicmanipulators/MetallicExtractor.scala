@@ -118,11 +118,15 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       var merged = false
       for (outputStack <- outputStacks) {
         if (elgibleStack.itemID == outputStack.itemID && (!elgibleStack.getHasSubtypes || elgibleStack.getItemDamage == outputStack.getItemDamage)) {
-          outputStack.stackSize += elgibleStack.stackSize
+          outputStack.stackSize += 1
           merged = true
         }
       }
-      if (!merged) outputStacks = elgibleStack.copy :: outputStacks
+      if (!merged) {
+        val t = elgibleStack.copy
+        t.stackSize = 1
+        outputStacks = t :: outputStacks
+      }
     }
     // reduce output according to item's damage
     if (inputStack.isItemStackDamageable) {
