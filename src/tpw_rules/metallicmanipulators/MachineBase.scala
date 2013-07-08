@@ -26,7 +26,7 @@ trait BlockMachine extends BlockContainer with Front {
 trait BlockGUI extends BlockContainer {
   override def onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer,
                                  meta: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean = {
-    if (player.isSneaking) false
+    if (player.isSneaking) return false
     player.openGui(MetallicManipulators, 0, world, x, y, z)
     true
   }
