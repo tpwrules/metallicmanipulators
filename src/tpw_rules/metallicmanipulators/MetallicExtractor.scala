@@ -64,7 +64,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       dumpOutput(List()) // if there is pending output, dump it before continuing
     } else if (workItem == null && power >= 800) { // grab an item to work on if we aren't currently working on one
       workItem = getWorkItem
-    } else if (power > 0) {
+    } else if (power > 8) {
       progress += 1
       power -= 8
       if (progress >= 100) {
