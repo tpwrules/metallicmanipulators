@@ -1,22 +1,21 @@
 package tpw_rules.metallicmanipulators
 
+import scala.collection.JavaConversions._
+
 import net.minecraft.block.{BlockContainer, material}
 import material.Material
 import net.minecraft.client.renderer.texture.IconRegister
-import net.minecraft.util.{MathHelper, Icon}
+import net.minecraft.util.{ResourceLocation, MathHelper, Icon}
 import net.minecraft.world.World
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.tileentity.{TileEntityFurnace, TileEntity}
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.item.crafting.{ShapelessRecipes, ShapedRecipes, IRecipe, CraftingManager}
 import net.minecraftforge.oredict.{ShapedOreRecipe, OreDictionary}
-
-import scala.collection.JavaConversions._
 import net.minecraft.nbt.{NBTTagList, NBTTagCompound}
 import net.minecraft.inventory.{ICrafting, Slot, IInventory, Container}
 import net.minecraft.entity.player.InventoryPlayer
 import net.minecraft.client.gui.inventory.GuiContainer
-import net.minecraft.client.resources.ResourceLocation
 
 class BlockMetallicExtractor(id: Int) extends BlockContainer(id, Material.iron) with BlockMachine with BlockGUI {
   var frontTexture: Icon = null
@@ -201,7 +200,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       case _ => false
     }
 
-  override def isStackValidForSlot(slot: Int, stack: ItemStack) =
+  override def isItemValidForSlot(slot: Int, stack: ItemStack) =
     slot match {
       case 18 => TileEntityFurnace.getItemBurnTime(stack) > 0
       case _ => true

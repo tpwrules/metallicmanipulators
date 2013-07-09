@@ -7,7 +7,7 @@ rm -r forge/mcp/src/minecraft/tpw_rules
 cp -r src/tpw_rules forge/mcp/src/minecraft/tpw_rules
 
 cd forge/mcp/bin
-find ../src/minecraft/tpw_rules -name "*.scala" | xargs scalac -classpath client_161.jar:../jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar:../jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar -sourcepath ../src -d minecraft/
+find ../src/minecraft/tpw_rules -name "*.scala" | xargs scalac -classpath client_162.jar:../jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar:../jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar -sourcepath ../src -d minecraft/
 
 cd ..
 ./reobfuscate.sh

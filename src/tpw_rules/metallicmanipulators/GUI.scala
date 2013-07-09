@@ -4,9 +4,8 @@ import net.minecraft.inventory.{Slot, IInventory, Container}
 import net.minecraft.entity.player.{InventoryPlayer, EntityPlayer}
 import net.minecraft.item.ItemStack
 import net.minecraft.client.gui.inventory.GuiContainer
-import net.minecraft.util.StatCollector
+import net.minecraft.util.{ResourceLocation, StatCollector}
 import org.lwjgl.opengl.GL11
-import net.minecraft.client.resources.ResourceLocation
 import cpw.mods.fml.common.network.IGuiHandler
 import net.minecraft.world.World
 import net.minecraft.client.gui.FontRenderer

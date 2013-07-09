@@ -45,7 +45,7 @@ trait Inventory extends TileMachine with IInventory {
   }
 
   def isUseableByPlayer(player: EntityPlayer) = true
-  def isStackValidForSlot(slot: Int, stack: ItemStack) = true
+  def isItemValidForSlot(slot: Int, stack: ItemStack) = true
 
   override def broken() = {
     vomitItems()
