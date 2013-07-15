@@ -57,7 +57,7 @@ trait Inventory extends TileMachine with IInventory {
   }
 
   def vomitItemList(items: List[ItemStack]) = {
-    val rand = new Random
+    val rand = MetallicManipulators.rand
     items foreach { item =>
       val entity = new EntityItem(worldObj,
         xCoord+(rand.nextFloat()*.8+.1), yCoord+(rand.nextFloat()*.8+.1),
