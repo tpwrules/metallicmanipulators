@@ -58,6 +58,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     // consume an item from the power slot if necessary
     if (power <= 800 && inv(18) != null) {
       power += TileEntityFurnace.getItemBurnTime(decrStackSize(18, 1))*2
+      inventoryChanged = true
     }
     if (outbuf.length > 0) {
       dumpOutput(List()) // if there is pending output, dump it before continuing
@@ -77,7 +78,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
   def getWorkItem: ItemStack = {
     for (slot <- 0 until 9; stack = getStackInSlot(slot); if stack != null) {
       val out = decrStackSize(slot, 1)
-      onInventoryChanged()
+      inventoryChanged = true
       return out
     }
     null

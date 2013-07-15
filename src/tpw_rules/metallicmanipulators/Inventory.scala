@@ -11,6 +11,8 @@ trait Inventory extends TileMachine with IInventory {
   val inventorySize: Int
   var inv: Array[ItemStack]
 
+  var inventoryChanged = false
+
   def closeChest() = {}
   def openChest() = {}
 
@@ -19,6 +21,14 @@ trait Inventory extends TileMachine with IInventory {
 
   def getGUI(invPlayer: InventoryPlayer): StandardGUI
   def getContainer(invPlayer: InventoryPlayer): StandardContainer
+
+  override def updateEntity() {
+    super.updateEntity()
+    if (inventoryChanged) {
+      inventoryChanged = false
+      onInventoryChanged()
+    }
+  }
 
   def decrStackSize(slot: Int, amount: Int): ItemStack = {
     var stack = getStackInSlot(slot)
@@ -113,7 +123,7 @@ trait Inventory extends TileMachine with IInventory {
         done = true
       }
     }
-    onInventoryChanged()
+    inventoryChanged = true
     done
   }
 }
