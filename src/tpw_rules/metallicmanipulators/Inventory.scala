@@ -58,8 +58,8 @@ trait Inventory extends TileMachine with IInventory {
   def isItemValidForSlot(slot: Int, stack: ItemStack) = true
 
   override def broken() = {
-    vomitItems()
     super.broken()
+    vomitItems()
   }
 
   def vomitItems() = {
