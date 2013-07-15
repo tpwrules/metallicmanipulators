@@ -33,15 +33,12 @@ trait StandardContainer extends Container {
     }
   }
 
-  def merge(stack: ItemStack, slot: Int): Boolean = {
-    if (slot < playerInventoryStart) {
-      if (!this.doMergeItemStack(stack, playerInventoryStart, playerInventoryStart+36, backwards=true)) {
-        return false
-      }
-    } else if (!this.doMergeItemStack(stack, 0, playerInventoryStart, backwards=false)) {
-      return false
-    }
-    true
+  def merge(stack: ItemStack, slot: Int) = {
+    // automatically returns value of doMergeItemStack
+    if (slot < playerInventoryStart)
+      this.doMergeItemStack(stack, playerInventoryStart, playerInventoryStart+36, backwards=true)
+    else
+      this.doMergeItemStack(stack, 0, playerInventoryStart, backwards=false)
   }
 
   override def transferStackInSlot(player: EntityPlayer, slot: Int): ItemStack = {
@@ -103,10 +100,11 @@ trait StandardGUI extends GuiContainer {
 object GUIHandler extends IGuiHandler {
   override def getServerGuiElement(id: Int, player: EntityPlayer, world: World,
                                     x: Int, y: Int, z: Int): Object =
-     world.getBlockTileEntity(x, y, z) match {
-       case te: Inventory => te.getContainer(player.inventory)
-       case _ => null
-     }
+    world.getBlockTileEntity(x, y, z) match {
+      case te: Inventory => te.getContainer(player.inventory)
+      case _ => null
+    }
+
   override def getClientGuiElement(id: Int, player: EntityPlayer, world: World,
                                     x: Int, y: Int, z: Int): Object =
     world.getBlockTileEntity(x, y, z) match {
