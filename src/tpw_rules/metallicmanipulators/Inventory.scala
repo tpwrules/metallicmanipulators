@@ -100,9 +100,9 @@ trait Inventory extends TileMachine with IInventory {
     }
   }
 
-  def mergeStackToSlots(stack: ItemStack, start: Int, end: Int): Boolean = mergeStackToSlots(this, stack, start, end)
+  def mergeStackToSlots(stack: ItemStack, start: Int, end: Int): Boolean = mergeStackToSlots(stack, this, start, end)
 
-  def mergeStackToSlots(te: IInventory, stack: ItemStack, start: Int, end: Int) = {
+  def mergeStackToSlots(stack: ItemStack, te: IInventory, start: Int, end: Int) = {
     var done = false
     for (slot <- start until end; currentStack = te.getStackInSlot(slot); if !done; if // split because of stupid unneeded semicolon warning
       currentStack != null; if stack.itemID == currentStack.itemID && (!stack.getHasSubtypes || stack.getItemDamage == currentStack.getItemDamage) && ItemStack.areItemStackTagsEqual(stack, currentStack)) {
