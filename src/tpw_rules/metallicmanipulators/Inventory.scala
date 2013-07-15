@@ -52,6 +52,7 @@ trait Inventory extends TileMachine with IInventory {
     inv(slot) = stack
     if (stack != null && stack.stackSize > getInventoryStackLimit)
       stack.stackSize = getInventoryStackLimit
+    inventoryChanged = true
   }
 
   def isUseableByPlayer(player: EntityPlayer) = player.getDistanceSq(xCoord+.5, yCoord+.5, zCoord+.5) < 64
