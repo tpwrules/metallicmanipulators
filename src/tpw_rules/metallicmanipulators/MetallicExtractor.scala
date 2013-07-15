@@ -229,15 +229,15 @@ class ContainerMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExt
   override def doMergeItemStack(stack: ItemStack, start: Int, end: Int, backwards: Boolean) =
     mergeItemStack(stack, start, end, backwards)
 
-  override def merge(stack: ItemStack, slot: Int) = {
+  override def merge(stack: ItemStack, slot: Int): Boolean = {
     if (slot < playerInventoryStart) {
       if (!this.mergeItemStack(stack, playerInventoryStart, playerInventoryStart+36, true)) {
-        false
+        return false
       }
     } else if (TileEntityFurnace.getItemBurnTime(stack) == 0) {
-      if (!this.mergeItemStack(stack, 0, 9, false)) false
+      if (!this.mergeItemStack(stack, 0, 9, false)) return false
     } else if (!this.mergeItemStack(stack, 18, 19, false)) {
-      false
+      return false
     }
     true
   }
