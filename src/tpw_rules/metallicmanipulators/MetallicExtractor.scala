@@ -149,14 +149,14 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     if (workItem != null) vomitItemList(List(workItem))
   }
 
-  override def writeToNBT(tag: NBTTagCompound): Unit = {
+  override def writeToNBT(tag: NBTTagCompound) = {
     super.writeToNBT(tag)
     if (workItem != null) {
       val t = new NBTTagCompound
       workItem.writeToNBT(t)
       tag.setCompoundTag("workItem", t)
     }
-    if (outbuf.length != 0){
+    if (outbuf.length != 0) {
       val invList = new NBTTagList()
       outbuf foreach { stack =>
         val stackTag = new NBTTagCompound()
@@ -169,7 +169,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     tag.setInteger("power", power)
   }
 
-  override def readFromNBT(tag: NBTTagCompound): Unit = {
+  override def readFromNBT(tag: NBTTagCompound) = {
     super.readFromNBT(tag)
     outbuf = List()
     if (tag.hasKey("outBuffer")) {
