@@ -100,9 +100,11 @@ trait Inventory extends TileMachine with IInventory {
     }
   }
 
-  def mergeStackToSlots(stack: ItemStack, start: Int, end: Int): Boolean = {
+  def mergeStackToSlots(stack: ItemStack, start: Int, end: Int): Boolean = mergeStackToSlots(this, stack, start, end)
+
+  def mergeStackToSlots(te: IInventory, stack: ItemStack, start: Int, end: Int) = {
     var done = false
-    for (slot <- start until end; currentStack = getStackInSlot(slot); if !done; if // split because of stupid unneeded semicolon warning
+    for (slot <- start until end; currentStack = te.getStackInSlot(slot); if !done; if // split because of stupid unneeded semicolon warning
       currentStack != null; if stack.itemID == currentStack.itemID && (!stack.getHasSubtypes || stack.getItemDamage == currentStack.getItemDamage) && ItemStack.areItemStackTagsEqual(stack, currentStack)) {
       if (currentStack.stackSize+stack.stackSize > currentStack.getMaxStackSize) {
         stack.stackSize -= currentStack.getMaxStackSize-currentStack.stackSize
@@ -114,12 +116,15 @@ trait Inventory extends TileMachine with IInventory {
       }
     }
     if (!done) {
-      for (slot <- start until end; currentStack = getStackInSlot(slot); if currentStack == null; if !done) {
-        setInventorySlotContents(slot, stack)
+      for (slot <- start until end; currentStack = te.getStackInSlot(slot); if currentStack == null; if !done) {
+        te.setInventorySlotContents(slot, stack)
         done = true
       }
     }
-    inventoryChanged = true
+    te match {
+      case x: Inventory => x.inventoryChanged = true
+      case x => x.onInventoryChanged()
+    }
     done
   }
 }
