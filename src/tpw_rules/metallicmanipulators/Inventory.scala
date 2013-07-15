@@ -59,10 +59,6 @@ trait Inventory extends TileMachine with IInventory {
 
   override def broken() = {
     super.broken()
-    vomitItems()
-  }
-
-  def vomitItems() = {
     vomitItemList(inv.toList)
   }
 
