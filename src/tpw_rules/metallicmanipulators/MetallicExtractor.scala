@@ -93,7 +93,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     // get the recipes that can make this item
     val recipes = TileMetallicExtractor.recipeList filter { x =>
       val output = x.getRecipeOutput
-      output != null && output.stackSize == 1 && output.itemID == stackID}
+      output != null && output.stackSize == 1 && output.itemID == stackID }
     if (recipes.length != 1) return // return if we found either no or too many recipes
     // get the list of items this recipe requires
     val inputList = recipes(0) match {
@@ -116,7 +116,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
     var outputStacks: List[ItemStack] = List()
     for (elgibleStack <- elgibleOutputs) {
       var merged = false
-      for (outputStack <- outputStacks) {
+      for (outputStack <- outputStacks; if !merged) {
         if (elgibleStack.itemID == outputStack.itemID && (!elgibleStack.getHasSubtypes || elgibleStack.getItemDamage == outputStack.getItemDamage)) {
           outputStack.stackSize += 1
           merged = true
