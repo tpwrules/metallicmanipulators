@@ -130,4 +130,42 @@ trait Inventory extends TileMachine with IInventory {
   }
 }
 
+trait Output extends TileMachine with Inventory {
+  val outputStart: Int
+  val outputEnd: Int
+
+  var outputBuf: List[ItemStack] = List()
+
+  override def updateEntity(): Unit = {
+    if (!worldObj.isRemote && outputBuf.length > 0)
+      outputBuf = outputBuf filter { item => !mergeStackToSlots(item, outputStart, outputEnd) }
+    super.updateEntity()
+  }
+
+  def addToOutput(items: List[ItemStack]) =
+    outputBuf = (items ::: outputBuf) filter { item => !mergeStackToSlots(item, outputStart, outputEnd) }
+
+  override def writeToNBT(tag: NBTTagCompound): Unit = {
+    super.writeToNBT(tag)
+    if (outputBuf.length == 0) return
+    val tagList = new NBTTagList
+    for (item <- outputBuf) {
+      val tagItem = new NBTTagCompound
+      item.writeToNBT(tagItem)
+      tagList.appendTag(tagItem)
+    }
+    tag.setTag("outputBuf", tagList)
+  }
+
+  override def readFromNBT(tag: NBTTagCompound): Unit = {
+    super.readFromNBT(tag)
+    if (!tag.hasKey("outputBuf")) return
+    outputBuf = List()
+    val tagList = tag.getTagList("outputBuf")
+    for (i <- 0 until tagList.tagCount; tagItem = tagList.tagAt(i).asInstanceOf[NBTTagCompound]) {
+      outputBuf = ItemStack.loadItemStackFromNBT(tagItem) :: outputBuf
+    }
+  }
+}
+
 trait SidedInventory extends TileMachine with Inventory with ISidedInventory

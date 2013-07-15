@@ -41,13 +41,13 @@ object TileMetallicExtractor {
   lazy val recipeList = CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.ArrayList[IRecipe]].toList
 }
 
-class TileMetallicExtractor extends TileEntity with SidedInventory {
+class TileMetallicExtractor extends TileEntity with SidedInventory with Output {
   val inventorySize = 19
+  val outputStart = 9
+  val outputEnd = 18
   var inv = new Array[ItemStack](inventorySize)
 
   var workItem: ItemStack = null
-
-  var outbuf: List[ItemStack] = List()
 
   var progress = 0
 
@@ -60,9 +60,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       power += TileEntityFurnace.getItemBurnTime(decrStackSize(18, 1))*2
       inventoryChanged = true
     }
-    if (outbuf.length > 0) {
-      dumpOutput(List()) // if there is pending output, dump it before continuing
-    } else if (workItem == null && power >= 800) { // grab an item to work on if we aren't currently working on one
+    if (outputBuf.length > 0) return // don't do work if there is pending output
+    if (workItem == null && power >= 800) { // grab an item to work on if we aren't currently working on one
       workItem = getWorkItem
     } else if (power >= 8) {
       progress += 1
@@ -70,7 +69,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       if (progress >= 100) {
         performOperation(workItem)
         progress = 0
-        workItem = if (outbuf.length > 0 && power >= 800) getWorkItem else null
+        workItem = if (outputBuf.length > 0 && power >= 800) getWorkItem else null
       }
     }
   }
@@ -82,10 +81,6 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       return out
     }
     null
-  }
-
-  def dumpOutput(output: List[ItemStack]) = {
-    outbuf = output ++ outbuf filter {x => !mergeStackToSlots(x, 9, 18)}
   }
 
   def performOperation(inputStack: ItemStack): Unit = {
@@ -142,7 +137,7 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       }
     }
     // and finally, stick the output into our inventory
-    dumpOutput(outputStacks)
+    addToOutput(outputStacks)
   }
 
   override def broken() = {
@@ -156,29 +151,12 @@ class TileMetallicExtractor extends TileEntity with SidedInventory {
       workItem.writeToNBT(t)
       tag.setCompoundTag("workItem", t)
     }
-    if (outbuf.length != 0) {
-      val invList = new NBTTagList()
-      outbuf foreach { stack =>
-        val stackTag = new NBTTagCompound()
-        stack.writeToNBT(stackTag)
-        invList.appendTag(stackTag)
-      }
-      tag.setTag("outBuffer", invList)
-    }
     tag.setInteger("progress", progress)
     tag.setInteger("power", power)
   }
 
   override def readFromNBT(tag: NBTTagCompound) = {
     super.readFromNBT(tag)
-    outbuf = List()
-    if (tag.hasKey("outBuffer")) {
-      val invList = tag.getTagList("outBuffer")
-      for (i <- 0 until invList.tagCount) {
-        val stackTag = invList.tagAt(i).asInstanceOf[NBTTagCompound]
-        outbuf = ItemStack.loadItemStackFromNBT(stackTag) :: outbuf
-      }
-    }
     workItem = null
     if (tag.hasKey("workItem")) {
       workItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("workItem"))
