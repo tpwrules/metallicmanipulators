@@ -146,11 +146,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory with Output {
 
   override def writeToNBT(tag: NBTTagCompound) = {
     super.writeToNBT(tag)
-    if (workItem != null) {
-      val t = new NBTTagCompound
-      workItem.writeToNBT(t)
-      tag.setCompoundTag("workItem", t)
-    }
+    if (workItem != null)
+      tag.setCompoundTag("workItem", workItem.writeToNBT(new NBTTagCompound))
     tag.setInteger("progress", progress)
     tag.setInteger("power", power)
   }
@@ -158,9 +155,8 @@ class TileMetallicExtractor extends TileEntity with SidedInventory with Output {
   override def readFromNBT(tag: NBTTagCompound) = {
     super.readFromNBT(tag)
     workItem = null
-    if (tag.hasKey("workItem")) {
+    if (tag.hasKey("workItem"))
       workItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("workItem"))
-    }
     progress = tag.getInteger("progress")
     if (progress < 0 || progress > 100) progress = 0
     power = tag.getInteger("power")

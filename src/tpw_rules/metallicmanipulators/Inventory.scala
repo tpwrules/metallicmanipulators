@@ -83,8 +83,7 @@ trait Inventory extends TileMachine with IInventory {
     super.writeToNBT(tag)
     val invList = new NBTTagList()
     for (slot <- 0 until inventorySize; stack = inv(slot); if stack != null) {
-      val slotTag = new NBTTagCompound()
-      stack.writeToNBT(slotTag)
+      val slotTag = stack.writeToNBT(new NBTTagCompound)
       slotTag.setByte("slot", slot.toByte)
       invList.appendTag(slotTag)
     }
@@ -149,11 +148,7 @@ trait Output extends TileMachine with Inventory {
     super.writeToNBT(tag)
     if (outputBuf.length == 0) return
     val tagList = new NBTTagList
-    for (item <- outputBuf) {
-      val tagItem = new NBTTagCompound
-      item.writeToNBT(tagItem)
-      tagList.appendTag(tagItem)
-    }
+    outputBuf foreach { item => tagList.appendTag(item.writeToNBT(new NBTTagCompound)) }
     tag.setTag("outputBuf", tagList)
   }
 
