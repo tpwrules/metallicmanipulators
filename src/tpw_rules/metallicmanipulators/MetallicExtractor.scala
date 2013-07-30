@@ -273,10 +273,11 @@ class GuiMetallicExtractor(playerInv: InventoryPlayer, te: TileMetallicExtractor
   val inventoryName = "Metallic Extractor"
   val guiTexture = new ResourceLocation("metallicmanipulators", "textures/gui/metallicExtractor.png")
 
-  def actualMC = this.mc
-  def actualFontRenderer = this.fontRenderer
-  def guiWidth = this.xSize
-  def guiHeight = this.ySize
+  // stupid crap because the trait can't access protected things in Container
+  def getFontRenderer = this.fontRenderer
+  def getXSize = this.xSize
+  def getYSize = this.ySize
+  def getMC = this.mc
 
   override def drawDynamicElements(x: Int, y: Int) = {
     this.drawTexturedModalRect(x+76, y+35,

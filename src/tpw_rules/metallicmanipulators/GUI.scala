@@ -68,10 +68,16 @@ trait StandardGUI extends GuiContainer {
   val inventoryName: String
   val guiTexture: ResourceLocation
 
-  val actualMC: Minecraft
-  val actualFontRenderer: FontRenderer
-  val guiWidth: Int
-  val guiHeight: Int
+  // stupid crap because the trait can't access protected things in Container
+  def getFontRenderer: FontRenderer
+  def getXSize: Int
+  def getYSize: Int
+  def getMC: Minecraft
+
+  lazy val guiWidth = getXSize
+  lazy val guiHeight = getYSize
+  lazy val actualFontRenderer = getFontRenderer
+  lazy val actualMC = getMC
 
   override protected def drawGuiContainerForegroundLayer(a: Int, b: Int) = {
     super.drawGuiContainerForegroundLayer(a, b)
